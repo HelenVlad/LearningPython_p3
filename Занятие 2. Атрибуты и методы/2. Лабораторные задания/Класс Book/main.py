@@ -5,11 +5,11 @@ class Book:
         self.pages = pages
 
     def __str__(self):
-        return f'{__class__.__name__}({self.name})'
+        return f'Книга "{self.name}"'
 
 
     def __repr__(self):
-        return f'{__class__.__name__}({self.id_}, {self.name}, {self.pages})'
+        return f'{__class__.__name__}(id_={self.id_}, name=\'{self.name}\', pages={self.pages})'
 
 
 
@@ -39,7 +39,7 @@ if __name__ == '__main__':
         print(book)  # проверяем метод __str__
 
     print(list_books)  # проверяем метод __repr__
-    print(type(list_books[0]), list_books[0])
-    print(type(list_books[1]), list_books[1])
-    book1 = list_books[1]
-    print(type(book1), f'book1 = {book1}')
+    # print(type(list_books[0]), list_books[0])
+    # print(type(list_books[1]), list_books[1])
+    # book1 = list_books[1]
+    # print(type(book1), f'book1 = {book1}')
