@@ -41,6 +41,46 @@ def check(min_num: (int, float), max_num: (int, float), units: str):
 
     return decorate
 
+def check_str(lst: list):
+    """
+    Декоратор для проверки значения аргумента функции.
+
+    Проверяет, что значение аргумента функции находится в заданном списке.
+
+    Args:
+        lst (list): Список допустимых значений для проверки.
+
+    Returns:
+        function: Обертка над функцией, которая выполняет проверку значения аргумента.
+
+    Raises:
+        ValueError: Если значение последнего аргумента функции не находится в заданном списке.
+
+    Examples:
+        >>> @check_str(["м", "ж"])
+        ... def check_gender(self, gender: str) -> str:
+        ...     return gender
+
+        >>> obj = Giraffe('м', 555.153, 2000.153, 456)
+        >>> obj.check_gender("м")
+        'м'
+        >>> obj.check_gender("ж")
+        'ж'
+        >>> obj.check_gender("другой")
+        ValueError: Для метода check_gender используются обозначения из списка: ['м', 'ж']. Введенное значение - другой
+    """
+    def decorate(func):
+        def wrapper(*arg):
+            if arg[-1] not in lst:
+                raise ValueError(
+                    f"Для метода {func.__name__} используются обозначения из списка: {lst}. Введенное значение - {arg[-1]}")
+            else:
+                ret = list(func(arg[0], arg[-1]))
+                return ret[0]
+
+        return wrapper
+
+    return decorate
 
 class Giraffe:
     """
@@ -68,6 +108,8 @@ class Giraffe:
         self.weight = self.check_weight(weight)
         self.gender = self.check_gender(gender)
 
+
+    @check_str(["м", "ж"])
     def check_gender(self, gender: str) -> str:
         """
         Проверяет правильность обозначения пола.
@@ -83,12 +125,7 @@ class Giraffe:
         Raises:
             ValueError: Если значение переменной gender не является допустимым обозначением пола.
         """
-        lst = ["м", "ж"]
-        if gender not in lst:
-            raise ValueError(
-                f"Обозначение пола следующее: 'м' - мужской, 'ж' - женский. Введенное значение - {gender}")
-        else:
-            return gender
+        return gender
 
     @check(min_num=2000, max_num=3000, units='см')
     def check_neck_len(self, *neck_length: (int, float)) -> (int, float):
@@ -204,6 +241,7 @@ class Flora:
         """
         return height
 
+    @check_str(["grass", "shrub", "tree"])
     def check_variety(self, variety: str) -> str:
         """
         Проверяет правильность обозначения разновидности растения.
@@ -220,16 +258,7 @@ class Flora:
         Raises:
             ValueError: Если значение переменной gender не является допустимым обозначением пола.
         """
-        lst = ["grass", "shrub", "tree"]
-        if variety not in lst:
-            raise ValueError(
-                f"Обозначение разновидности растения следующее: "
-                f"grass - трава, "
-                f"shrub - кустарник, "
-                f"tree - дерево. "
-                f"Введенное значение - {variety}")
-        else:
-            return variety
+        return variety
 
     def growing(self):
         '''
@@ -356,7 +385,7 @@ if __name__ == "__main__":
 
     # TODO работоспособность экземпляров класса проверить с помощью doctest
     tomas = Giraffe('м', 555.153, 2000.153, 456)
-    print(tomas.neck_length)
+    print(tomas.neck_length, tomas.gender)
 
     acacia = Flora("tree", 16, 70)
     print(acacia.greenery)
