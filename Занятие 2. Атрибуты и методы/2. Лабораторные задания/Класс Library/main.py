@@ -34,13 +34,13 @@ class Library:
         else:
             self.books = {i: x for i, x in enumerate(books)}
 
-    def get_next_book_id(self):
+    def get_next_book_id(self) -> int:
         if len(self.books) == 0:
             return 1
         else:
             return len(self.books) + 1
 
-    def get_index_by_book_id(self, idd):
+    def get_index_by_book_id(self, idd: int) ->int:
 
         for x in self.books.items():
             if x[-1].id_ == idd:
