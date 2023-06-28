@@ -56,9 +56,10 @@ class Mammals:
 
         Args:
             lst (list): Список допустимых значений для проверки.
+            value (str): Список допустимых значений для проверки.
 
         Returns:
-            function: Обертка над функцией, которая выполняет проверку значения аргумента.
+            value (str): Соответствующее критерием значение
 
         Raises:
             ValueError: Если значение последнего аргумента функции не находится в заданном списке.
@@ -114,6 +115,11 @@ class Mammals:
         else:
             child = cls(*object1.data_child()[-1])
             return child
+
+    @staticmethod
+    def data_child():
+        return __class__.__name__, [1, 50, 'кг', randint(1, 50), choice(["м", "ж"])]
+
     def movement(self):
         """
         Метод, описывающий движение животного.
@@ -136,6 +142,7 @@ class Lions(Mammals):
             self.mane = True
         else:
             self.mane = False
+
     def __repr__(self):
         return f'{__class__.__name__}(gender={self.gender}, weight={self.weight})'
     def data_child(self):
@@ -152,11 +159,6 @@ class Giraffe(Mammals):
     """
     Класс, представляющий жирафа.
 
-    Attributes:
-        gender (str): Пол жирафа.
-        weight (int, float): Вес жирафа.
-        neck_length (int, float): Длина шеи жирафа.
-        spots (int): Количество пятен на теле жирафа.
     """
 
     def __init__(self, gender: str, weight: (int, float), neck_length: (int, float), spots: int) -> None:
@@ -173,9 +175,16 @@ class Giraffe(Mammals):
         self.neck_length = self.check(min_num=60, max_num=3000, units='см', value=neck_length)
         self.spots = self.check(min_num=0, max_num=500, units='ед', value=spots)
         self.predator = False
+
     def __repr__(self):
-        return f'{__class__.__name__}(gender={self.gender}, weight={self.weight}, neck_length={self.neck_length}, spots={self.spots})'
-    def data_child(self):
+        return f'{__class__.__name__}' \
+               f'(gender={self.gender}, ' \
+               f'weight={self.weight}, ' \
+               f'neck_length={self.neck_length}, ' \
+               f'spots={self.spots})'
+
+    @staticmethod
+    def data_child():
         return __class__.__name__, [choice(["м", "ж"]), randint(35, 100), randint(60, 180), randint(0, 100)]
 
     def defense(self):
@@ -195,3 +204,6 @@ if __name__ == "__main__":
     marina = Lions('ж', 150)
     olfo = Lions.reproduces_offspring(endry, marina)
     print(olfo)
+
+    animal = Mammals(min_num=1, max_num=300, units='кг', value=150, gender="м")
+    animal2 = Mammals(min_num=1, max_num=300, units='кг', value=150, gender="м")
