@@ -121,10 +121,13 @@ class Mammals:
         raise AttributeError("Данный атрибут изменить нельзя")
 
     def eats(self):
+        return f'Животное {__class__.__name__} кушает'
+
+    def movement(self):
         """
-        Метод, описывающий питание животного.
+        Метод, описывающий движение животного.
         """
-        pass
+        return f'Животное {__class__.__name__} двигается'
 
     def __repr__(self):
         """
@@ -163,11 +166,7 @@ class Mammals:
         """
         return __class__.__name__, [1, 50, 'кг', randint(1, 50), choice(["м", "ж"])]
 
-    def movement(self):
-        """
-        Метод, описывающий движение животного.
-        """
-        pass
+
 
 
 class Lions(Mammals):
@@ -270,6 +269,8 @@ if __name__ == "__main__":
     animal3 = Mammals.reproduces_offspring(animal, animal2)
 
     print(f'1){animal3=}, {animal3.weight=}')
-    animal3.weight = 1500
+    animal3.weight = 35
 
     print(f'2){animal3=}, {animal3.weight=}')
+
+    endry.eats()
