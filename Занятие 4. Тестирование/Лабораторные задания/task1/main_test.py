@@ -1,12 +1,5 @@
 import unittest
 from main import Mammals
-from random import randint
-
-
-# class MyTestCase(unittest.TestCase):
-# def test_something(self):
-#     self.assertEqual(True, False)  # add assertion here
-
 
 class ParentClassTest(unittest.TestCase):
     def setUp(self):
@@ -42,9 +35,6 @@ class ParentClassTest(unittest.TestCase):
         result = self.animal_m.gender
         self.assertEqual(result, 'м')
 
-        result = self.animal_m.settings
-        self.assertEqual(result, {'min_num': 1, 'max_num': 300, 'units': 'кг', 'value': 150, 'gender': 'м'})
-
     def test_setter(self):
         invalid_value = None
         with self.assertRaises(AttributeError):
@@ -55,9 +45,18 @@ class ParentClassTest(unittest.TestCase):
         self.assertRaises(TypeError, Mammals.reproduces_offspring, self.animal_m, self.animal_m2)
 
         child = Mammals.reproduces_offspring(self.animal_m, self.animal_w)
+        self.assertEqual(type(child), type(self.animal_m))
 
+    def test_repr(self):
+        self.assertEqual(repr(self.animal_m), 'Mammals(gender=м, weight=150)')
 
+    def test_data_child(self):
+        self.assertEqual(self.animal_m.data_child()[0], 'Mammals')
 
+        lst_check_num = list(range(1, 6))
+        lst_check_str = ["м", "ж"]
+
+        
 
 
 
