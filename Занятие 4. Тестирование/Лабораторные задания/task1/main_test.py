@@ -43,8 +43,10 @@ class ParentClassTest(unittest.TestCase):
     def test_setter(self):
         invalid_value = None
         with self.assertRaises(AttributeError):
-            self.animal_m.gender = invalid_value
             self.animal_m.data = invalid_value
+
+        with self.assertRaises(AttributeError):
+            self.animal_m.gender = invalid_value
 
         with self.assertRaises(ValueError):
             self.animal_m.weight = invalid_value
@@ -75,12 +77,6 @@ class ParentClassTest(unittest.TestCase):
         text = self.animal_m.eats()
 
         self.assertEqual(text, f'Животное Mammals кушает')
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

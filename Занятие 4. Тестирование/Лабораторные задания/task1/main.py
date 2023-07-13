@@ -267,10 +267,3 @@ if __name__ == "__main__":
     animal2 = Mammals(min_num=1, max_num=300, units='кг', value=150, gender="ж")
 
     animal3 = Mammals.reproduces_offspring(animal, animal2)
-
-    print(f'1){animal3=}, {animal3.weight=}')
-    animal3.weight = 35
-
-    print(f'2){animal3=}, {animal3.weight=}')
-
-    endry.eats()
