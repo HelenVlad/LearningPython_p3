@@ -22,12 +22,12 @@ class ParentClassTest(unittest.TestCase):
 
     def test_method_check_str(self):
         lst = ["т", "е", "с", "т"]
-        value = 'т'
+        value = 'с'
 
         result = Mammals.check_str(lst, value)
         self.assertEqual(result, value)
 
-        value = 'j'
+        value = 'w'
         self.assertRaises(ValueError, Mammals.check_str, lst, value)
 
     def test_getter(self):

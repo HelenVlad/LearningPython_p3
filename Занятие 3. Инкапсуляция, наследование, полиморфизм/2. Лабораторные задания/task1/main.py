@@ -29,7 +29,7 @@ class Book:
         if isinstance(value, (int, float)) and min_limit < value < max_limit:
             return value
         elif not isinstance(value, (int, float)):
-            raise ValueError(f'Недопустимый тип данных. Требуется численное значение.')
+            raise ValueError(f'Недопустимый тип данных. Требуется числовое значение.')
         elif not min_limit < value < max_limit:
             raise ValueError(
                 f'Введенное значение не входит в интервал: {min_limit=} < {value} < {max_limit=}')
