@@ -12,56 +12,50 @@ class DataStorage:
     def add(self, value):
         self.storage.append(value)
 
+    def clear_storage(self):
+        self.storage.clear()
+
+    def memory_operation(self):
+        return self.storage[-1]
+
+    def view(self):
+        return self.storage
+
 
 class UserInterface:
     """
     Класс, отвечающий за ввод данных пользователем и отображение результата.
     """
-    # паттерн для инструментов класса BaseCalculator
-    pattern_BC = re.compile(r'^(\d+(?:\.\d+)?)\s*([-+*/%])\s*(\d+(?:\.\d+)?)')
-    # паттерн для инструментов класса AccountingCalculator
-    pattern_AC = re.compile(r'^(\d+(?:\.\d+)?)\s*([-+*/%])\s*(\d+(?:\.\d+)?)$|^([AC][CE][C][MS][MC][MR][M-][M+])$')
 
-    def __init__(self, exp):
+    def __init__(self, exp, pat):
+        self.pattern = pat
         self.string = ''.join(exp.split(' '))
-        self.expression = self.detection(self.pattern_BC, self.string)
+        self.expression = self.detection(self.pattern, self.string)
 
-    # def detection(self, pat, string):
-    #     match = re.match(pat, string)
-    #     try:
-    #         if match:
-    #             first_number = match.group(1)
-    #             operator = match.group(2)
-    #             second_number = match.group(3)
-    #         print(f'{match.group(10)=}')
-    #         return [float(first_number), operator, float(second_number)]
-    #     except UnboundLocalError:
-    #         raise ValueError('Введено неизвестное значение.')
+    @staticmethod
+    def detection(pat, string):
+        matches = re.findall(pat, string)
+        if not matches:
+            raise ValueError('Не найдено совпадений.')
 
-    def detection(self, pat, string):
-        match = re.match(pat, string)
-        try:
-            result = []
-            num = 1
-            while True:
-                try:
-                    result.append(match.group(num))
-                    num += 1
-                except IndexError:
-                    break
-            return result
-        except UnboundLocalError:
-            raise ValueError('Введено неизвестное значение.')
+        for match in matches:
+            # Проверка, содержит ли какая-либо группа непустое значение
+            if any(val.strip() for val in match):
+                res = [val.strip() for val in match if val.strip()]
+                return res
 
     def data_output(self, data):
-        print('+' + ('-') * 20 + '+')
+        print('+' + '-' * 20 + '+')
         print(f'Введенное выражение:\n{self.string}')
-        print('+' + ('-') * 20 + '+')
+        print('+' + '-' * 20 + '+')
         print(f'Результат вычисления:\n{data}')
-        print('+' + ('-') * 20 + '+')
+        print('+' + '-' * 20 + '+')
 
 
-class Application_BC:
+class ApplicationBC:
+    # паттерн для инструментов класса BaseCalculator
+    pattern = re.compile(r'^(\d+(?:\.\d+)?)\s*([-+*/%])\s*(\d+(?:\.\d+)?)')
+
     def __init__(self):
         self.app = self.action()
 
@@ -70,28 +64,65 @@ class Application_BC:
         return calculation
 
     def data(self):
-        entry = UserInterface(input('Введите выражение:\n->'))
+        entry = UserInterface(input('Введите выражение:\n->'), self.pattern)
         calculation = self.calc(entry.expression)
         entry.data_output(calculation.calc)
         return calculation
 
+    @staticmethod
+    def hello():
+        return 'Приветствуем в приложении "Калькулятор"! Набор функций:\n \
+                - Сложение;\n \
+                - Вычитание;\n \
+                - Умножение;\n \
+                - Деление;\n \
+                - Расчет процентов.\n \
+Приложение поддерживает ввод типа а(+-*/%)b \n \
+    Пример:\n \
+    150+450 \n \
+    150-100 \n \
+    150*5 \n \
+    150/2 \n \
+    150%2\n'
+
     def action(self):
+        print(self.hello())
         while True:
             self.data()
 
 
-class Application_AC(Application_BC):
+storage_OBJ = DataStorage()  # КОНСТАНТА
+
+
+class ApplicationAC(ApplicationBC):
+    pattern = re.compile(
+        r'(?:(\d+\.\d+|\d+)(?:\s*([-+*/%])\s*([0-9]+|M)|\s*([MC])|(?<=\d)\s*([-+*/%])\s*M(?=/0)))|(MC)|(MR)')
 
     def calc(self, lst):
         calculation = AccountingCalculator(lst)
         return calculation
 
+    @staticmethod
+    def hello2():
+        return 'Новые функции:\n \
+                - Ведение истории вычислений \n \
+                - MC - удаление данных в памяти \n \
+                - MR - отображение содержимого буфера \n \
+                - M- - вычитание последнего значения в буфере c новым значением \n \
+                - M+ - сложение последнего значения в буфере c новым значением \n \
+    Пример ввода: \n \
+    150+M \n \
+    150-M \n \
+    MR \n \
+    MC'
+
     def action(self):
-        storage = DataStorage()
+        print(self.hello())
+        print(self.hello2())
         while True:
             calculation = self.data()
-            storage.add(calculation)
-            print(storage.storage)
+            if calculation.string not in [['MC'], ['MR']]:
+                storage_OBJ.add(calculation)
 
 
 class BaseCalculator:
@@ -101,9 +132,6 @@ class BaseCalculator:
     - Вычитание;
     - Умножение;
     - Деление;
-    - Смена знака;
-    - Вычисление квадратного корня;
-    - Возведение в степень;
     - Расчет процентов.
     """
 
@@ -117,7 +145,8 @@ class BaseCalculator:
     def __repr__(self):
         return f"{''.join(self.string)}={self.calc}"
 
-    def base_calculation(self, strin):
+    @staticmethod
+    def base_calculation(strin):
         """
         Метод, который определяет тип операции и производит вычисление.
         """
@@ -130,6 +159,7 @@ class BaseCalculator:
         }
         if len(strin) >= 3:
             result = var[strin[1]](float(strin[0]), float(strin[2]))
+
         else:
             raise TypeError('На данный момент поддерживаются действия только  между двумя числами')
 
@@ -139,16 +169,11 @@ class BaseCalculator:
 class AccountingCalculator(BaseCalculator):
     """
     Класс бухгалтерского калькулятора. Имеет функции помимо базовых:
-    - Добавление двух нулей к введенному числу
     - Ведение истории вычислений
-    - АС - удаление всех введенных данных, в т.ч. из памяти
-    - СЕ - очищение только текущего поля, не затрагивает данные в памяти
-    # - С - очистка ввода
-    - MS - запись текущего значения на дисплее в буфер памяти
     - MC - удаление данных в памяти
     - MR - отображение содержимого буфера
-    - M- - вычитание значения в буфере из текущего значения на дисплее
-    - M+ - сложение значения в буфере из текущего значения на дисплее
+    - M- - вычитание последнего значения в буфере c новым значением
+    - M+ - сложение последнего значения в буфере c новым значением
 
     """
 
@@ -159,17 +184,25 @@ class AccountingCalculator(BaseCalculator):
 
     def function_selection(self, value):
         signs = ['-', '+', '*', '/', '%']
-        signs2 = ['AC', 'CE', 'C', 'MC', 'MS', 'MR', 'M+', 'M-']
 
-        if value[1] in signs:
+        if any([x == 'M' for x in value]):
+            val_indx = value.index('M')
+            val = storage_OBJ.memory_operation()
+            value[val_indx] = str(val.calc)
             self.calc = self.base_calculation(value)
-        elif value[1] in signs2:
-            self.calc = self.history_of_calculation(value)
+
+        elif any([x in signs for x in value]):
+            self.calc = self.base_calculation(value)
+
+        elif value == ['MC']:
+            storage_OBJ.clear_storage()
+            self.calc = 'История очищена'
+
+        elif value == ['MR']:
+            self.calc = storage_OBJ.view()
+
         else:
             raise TypeError('Функция не опознана или не существует')
-
-    def history_of_calculation(self, value):
-        return f'Функция в разработке'
 
 
 class EngineerCalculator(AccountingCalculator):
@@ -197,4 +230,4 @@ class EngineerCalculator(AccountingCalculator):
 
 
 if __name__ == "__main__":
-    app = Application_AC()
+    app = ApplicationAC()
